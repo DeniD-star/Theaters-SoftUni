@@ -13,8 +13,8 @@ module.exports =()=> (req, res, next)=>{
         //attach functions to context
         if(parseToken(req, res)){
             req.auth = {
-                async register(email, username, password){
-                        const token = await register(email, username, password);
+                async register(username, password){
+                        const token = await register(username, password);
                         res.cookie(COOKIE_NAME, token);
                 },
                  async login(username, password){
@@ -36,22 +36,22 @@ module.exports =()=> (req, res, next)=>{
        
 }
 
-async function register(email, username, password){
+async function register(username, password){
     const existingUsername = await userService.getUserByUsername(username);
-    const existingEmail = await userService.getUserByUsername(email);
+    //const existingEmail = await userService.getUserByUsername(email);
 
     if(existingUsername){
         throw new Error ('Username is taken!')
     }
-    if(existingEmail){
-        throw new Error ('Email is taken!')
-    }
+    // if(existingEmail){
+    //     throw new Error ('Email is taken!')
+    // }
 
     //if is not existing we register him, 
     //1. we hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
     //i sega go suzdavame
-    const user = await userService.createUser(email, username, hashedPassword);
+    const user = await userService.createUser(username, hashedPassword);
 
     return generateToken(user);
 }
@@ -84,7 +84,6 @@ function generateToken(userData){
 return jwt.sign({
     _id: userData._id,
     username: userData.username,
-    email: userData.email
 }, TOKEN_SECRET)
 }
 
