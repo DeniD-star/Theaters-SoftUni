@@ -60,7 +60,9 @@ async function login( username, password){
    
  //if we don't find such user in database
     if(!user){
-        throw new Error ('No such user!')//taq gre6ka e za nas, tq 6te bude catchnata ot controllera i ve4e controllera 6te re6i kakva gre6ka da vurne na potrebitelq
+        const err = new Error ('No such user!');
+        err.type = 'credential';
+        throw err;//taq gre6ka e za nas, tq 6te bude catchnata ot controllera i ve4e controllera 6te re6i kakva gre6ka da vurne na potrebitelq
     }
 
    //if is there, then we compare passwords
@@ -68,7 +70,9 @@ async function login( username, password){
     
 //if is there is no match
     if(!hasMatch){
-        throw new Error ('Incorrect password!')//taq gre6ka e za nas, tq 6te bude catchnata ot controllera i ve4e controllera 6te re6i kakva gre6ka da vurne na potrebitelq
+        const err = new Error ('Incorrect password!')
+        err.type = 'credential';
+        throw err;//taq gre6ka e za nas, tq 6te bude catchnata ot controllera i ve4e controllera 6te re6i kakva gre6ka da vurne na potrebitelq
     }
 
     //if there is a match we have to do 2 things

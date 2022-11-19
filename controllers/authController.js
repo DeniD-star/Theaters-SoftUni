@@ -8,8 +8,18 @@ router.get('/register', isGuest(), (req, res) => {
 })
 
 router.post('/register',
-    body('username', 'Username is required!').isLength({ min: 3 }).withMessage('Username must be at least 3 characters long!').bail().isAlphanumeric().withMessage('Username must contain only english letters and digits!'),
-    body('password', 'Password is required!').isLength({ min: 3 }).withMessage('Username must be at least 3 characters long!').bail().isAlphanumeric().withMessage('Username must contain only english letters and digits!'),
+    body('username', 'Username is required!')
+    .isLength({ min: 3 })
+    .withMessage('Username must be at least 3 characters long!')
+    .bail()
+    .isAlphanumeric()
+    .withMessage('Username must contain only english letters and digits!'),
+    body('password', 'Password is required!')
+    .isLength({ min: 3 })
+    .withMessage('Password must be at least 3 characters long!')
+    .bail()
+    .isAlphanumeric()
+    .withMessage('Password must contain only english letters and digits!'),
     body('rePass', 'Repeat password, please!').custom((value, { req }) => {
         if (value !== req.body.password) {
             throw new Error('Passwords don\'t match!')
@@ -57,8 +67,14 @@ router.post('/login', isGuest(),async (req, res) => {
 
     } catch (err) {
 
+        let errors = [err.message];
+
+        if(err.type == 'credential'){
+            errors = ['Incorrect username or password!']
+        }
+
         const ctx = {
-            errors: [err.message],
+            errors,
             userData: {
                 username: req.body.username,
 
