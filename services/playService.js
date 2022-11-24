@@ -7,6 +7,13 @@ async function getPlayById(id) {
 
 }
 async function createPlay(playData) {
+
+    const pattern = new RegExp(`^${playData.title}$`, 'i');
+    const existing = await Play.find({title: {$regex: pattern}})
+
+    if(existing){
+        throw new Error ('A play with this name already exists!')
+    }
     const play = new Play(playData);
     await play.save();
     return play;
