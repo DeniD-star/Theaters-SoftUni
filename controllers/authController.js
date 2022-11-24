@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { body, validationResult } = require('express-validator');
-const {isGuest} = require('../middlewares/guards')
+const {isGuest} = require('../middle-wares/guards')
 
 
 router.get('/register', isGuest(), (req, res) => {

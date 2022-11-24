@@ -4,7 +4,7 @@ const {PORT} = require('./config/index');
 const databaseConfig = require('./config/database');
 const expressConfig = require('./config/express');
 const routesConfig = require('./config/routes');
-const authMiddleware = require('./middlewares/auth');
+const authMiddleware = require('./middle-wares/auth');
 start();
 
 async function start(){
