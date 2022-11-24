@@ -1,7 +1,7 @@
 const Play = require('../models/Play');
 
 async function getAllPlays() {
-    return Play.find({isPublic: true}).lean()
+    return Play.find({isPublic: true}).sort({createdAt: -1}).lean()
 }
 async function getPlayById(id) {
 
