@@ -26,7 +26,7 @@ router.post('/create', isUser(), async (req, res) => {
     } catch (err) {
         console.log(err);
         console.log('---');
-        console.log();
+    
         const ctx = {
             errors:parseError(err),
             playData: {
@@ -45,6 +45,7 @@ router.get('/details/:id', async(req, res)=>{
 
     try {
         const play = await req.storage.getPlayById(req.params.id);
+        play.hasUser = Boolean(req.user);
         play.isAuthor = req.user && req.user._id == play.author;
         play.liked = req.user && play.usersLiked.includes(req.user._id);
         res.render('details', {play})
