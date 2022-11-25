@@ -41,4 +41,18 @@ router.post('/create', isUser(), async (req, res) => {
 
 })
 
+router.get('/details/:id', async(req, res)=>{
+
+    try {
+        const play = await req.storage.getPlayById(req.params.id);
+        play.isAuthor = req.user && req.user._id == play.author;
+        play.liked = req.user && play.usersLiked.includes(req.user._id);
+        res.render('details', {play})
+    } catch (err) {
+        console.log(err.message);
+        res.redirect('/404')
+    }
+  
+})
+
 module.exports = router;

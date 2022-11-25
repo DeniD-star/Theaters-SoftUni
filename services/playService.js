@@ -4,6 +4,7 @@ async function getAllPlays() {
     return Play.find({isPublic: true}).sort({createdAt: -1}).lean()
 }
 async function getPlayById(id) {
+    return Play.findById(id).populate('usersLiked').lean();
 
 }
 async function createPlay(playData) {
