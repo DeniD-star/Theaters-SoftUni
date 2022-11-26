@@ -55,11 +55,30 @@ router.get('/details/:id', async(req, res)=>{
     }
   
 })
+router.get('/edit/:id', isUser(), async(req, res)=>{
 
-router.get('/delete/:id', async(req, res)=>{
+    try {
+        const play = await req.storage.getPlayById(req.params.id);
+        if(play.author != req.user._id){
+            throw new Error ('Cannot edit a play you have not created!')
+        }
+        res.render('edit', {play})
+    } catch (err) {
+        console.log(err.message);
+        res.redirect('/play/details' + req.params.id)
+    }
+  
+})
+
+router.get('/delete/:id', isUser(), async(req, res)=>{
     try {
 
-        await req.storage.deletePlay(req.params.id);
+        const play = await req.storage.deletePlay(req.params.id);
+
+        if(play.author != req.user._id){
+            throw new Error ('Cannot delete a play you have not created!')
+        }
+
         res.redirect('/');
         
     } catch (err) {
