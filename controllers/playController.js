@@ -45,9 +45,10 @@ router.get('/details/:id', async(req, res)=>{
 
     try {
         const play = await req.storage.getPlayById(req.params.id);
+
         play.hasUser = Boolean(req.user);
         play.isAuthor = req.user && req.user._id == play.author;
-        play.liked = req.user && play.usersLiked.includes(req.user._id);
+        play.liked = req.user && play.usersLiked.find(u=> u._id == req.user._id);
         res.render('details', {play})
     } catch (err) {
         console.log(err.message);
@@ -69,6 +70,36 @@ router.get('/edit/:id', isUser(), async(req, res)=>{
     }
   
 })
+router.post('/edit/:id', isUser(), async(req, res)=>{
+
+    try {
+
+        const play = await req.storage.getPlayById(req.params.id);
+
+        if(play.author != req.user._id){
+            throw new Error ('Cannot edit a play you have not created!')
+        }
+      
+        await req.storage.editPlay(req.params.id, req.body);
+        res.redirect('/');
+
+    } catch (err) {
+        console.log(err.message);
+
+        const ctx ={
+            errors: parseError(err),
+            play: {
+                _id: req.params.id,
+                title: req.body.title,
+                description: req.body.description,
+                imageUrl: req.body.imageUrl,
+                isPublic: Boolean(req.body.isPublic),
+            }
+        }
+        res.render('edit', ctx)
+    }
+  
+})
 
 router.get('/delete/:id', isUser(), async(req, res)=>{
     try {
@@ -84,6 +115,22 @@ router.get('/delete/:id', isUser(), async(req, res)=>{
     } catch (err) {
         
         res.redirect('/play/details' + req.params.id)
+    }
+})
+router.get('/like/:id', isUser(), async(req, res)=>{
+    try {
+
+        const play = await req.storage.getPlayById(req.params.id);
+
+        if(play.author == req.user._id){
+            throw new Error ('Cannot like your own play!')
+        }
+    await req.storage.likePlay(req.params.id, req.user._id);
+        res.redirect('/play/details/' + req.params.id);
+        
+    } catch (err) {
+        
+        res.redirect('/play/details/' + req.params.id)
     }
 })
 
